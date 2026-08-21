@@ -65,4 +65,12 @@ def msg(m):
 
     bot.reply_to(m, "Format noto'g'ri.")
 
-bot.infinity_polling()
+import time
+
+while True:
+    try:
+        print("Bot ishlayapti...")
+        bot.infinity_polling(skip_pending=True, timeout=20)
+    except Exception as e:
+        print("Qayta ulanmoqda:", e)
+        time.sleep(3)
