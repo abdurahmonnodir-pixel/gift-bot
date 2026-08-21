@@ -1,9 +1,10 @@
-import os
+
 import re
 import sqlite3
 import telebot
 
-bot = telebot.TeleBot(os.environ["BOT_TOKEN"])
+TOKEN = "8834370706:AAGpsUbPhKxroPekH9bdpie8rMfhdFPVwt8"
+bot = telebot.TeleBot(TOKEN, threaded=False)
 
 db = sqlite3.connect("gift.db", check_same_thread=False)
 sql = db.cursor()
