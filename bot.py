@@ -73,34 +73,35 @@ def text(m):
             bot.reply_to(m, f"✅ {saved} ta gift saqlandi")
             return
 
-        # ===== Sotilgan gift =====
-        s = sale_pattern.search(txt)
+                # ===== Bir nechta sotuvni qabul qilish =====
+        sales = list(sale_pattern.finditer(txt))
 
-        if s:
-            code = re.sub(r"\D", "", s.group(1))
-            income = float(s.group(2))
+        if sales:
+            result = []
 
-            row = db.execute(
-                "SELECT buy FROM gifts WHERE code=?",
-                (code,)
-            ).fetchone()
+            for s in sales:
+                code = re.sub(r"\D", "", s.group(1))
+                income = float(s.group(2))
 
-            if row is None:
-                bot.reply_to(m, f"❌ Kod topilmadi: {code}")
-                return
+                row = db.execute(
+                    "SELECT buy FROM gifts WHERE code=?",
+                    (code,)
+                ).fetchone()
 
-            buy = row[0]
-            profit = income - buy
+                if row is None:
+                    result.append(f"❌ {code} topilmadi")
+                    continue
 
-            db.execute(
-                "DELETE FROM gifts WHERE code=?",
-                (code,)
-            )
+                buy = row[0]
+                profit = income - buy
 
-            db.execute(
-                "UPDATE total SET profit=profit+? WHERE id=1",
-                (profit,)
-            )
+                db.execute("DELETE FROM gifts WHERE code=?", (code,))
+                db.execute(
+                    "UPDATE total SET profit=profit+? WHERE id=1",
+                    (profit,)
+                )
+
+                result.append(f"✅ {code}  +{profit:.1f}⭐")
 
             db.commit()
 
@@ -110,14 +111,8 @@ def text(m):
 
             bot.reply_to(
                 m,
-                f"✅ SOTILDI\n\n"
-                f"🎁 Kod: {code}\n"
-                f"📥 Xarid: {buy:.0f} ⭐\n"
-                f"📤 Tushdi: {income:.1f} ⭐\n"
-                f"💵 Foyda: {profit:.1f} ⭐\n\n"
-                f"💰 Jami: {total:.1f} ⭐"
+                "\n".join(result) + f"\n\n💰 Jami: {total:.1f}⭐"
             )
-
             return
 
         bot.reply_to(m, "❌ Format noto'g'ri")
@@ -132,3 +127,4 @@ while True:
     except Exception as e:
         print("Qayta ulanmoqda:", e)
         time.sleep(5)
+  
