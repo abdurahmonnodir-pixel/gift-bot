@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS total(
 db.execute("INSERT OR IGNORE INTO total VALUES(1,0)")
 db.commit()
 
-buy_pattern = re.compile(r"\d{2}\.\d{2}\s+\d{2}:\d{2}\s+(\d+)\s+(\d+)")
+buy_pattern = re.compile(r"\d{1,2}\.\d{1,2}\s+\d{2}:\d{2}\s+(\d+)\s+(\d+)")
 sale_pattern = re.compile(r"#([\d,\s]+).*?пополнен на\s+([\d.]+)", re.S)
 
 @bot.message_handler(commands=["start"])
